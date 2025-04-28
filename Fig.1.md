@@ -89,3 +89,5 @@ scale_fill_manual(values = color1)
 ```
 
 - ![Fig.1a](Figures/Fig.1/gaodong_merge_ncTRM_pca_plot.png)
+- <img src="Figures/Fig.1/gaodong_merge_ncTRM_pca_plot.png" width="500" />
+
