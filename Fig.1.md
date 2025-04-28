@@ -1,3 +1,4 @@
+- All figure.1 pipeline
 ```r
 # 加载必要的R包
 library(Rsamtools)
