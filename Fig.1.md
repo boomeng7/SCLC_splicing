@@ -87,4 +87,4 @@ p1 <- ggbarplot(
 rotate_x_text(angle = 90) + 
 scale_fill_manual(values = color1)
 
-![Fig.1a](Figures/Fig.1/Fig.1d-1.svg)
+![Fig.1a](Figures/Fig.1/gaodong_merge_ncTRM_pca_plot.png)
