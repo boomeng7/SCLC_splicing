@@ -747,8 +747,6 @@ all_merge$Status <- "1"
 all_merge$final_status <- ifelse(all_merge$Status=="alive",0,1)
 all_merge$Survival..months. <- as.numeric(all_merge$Survival..months.)
 
-scp -r /mnt/data/user_data/xuelan/project/1naifeifei/SCLC_plot_20180502/3V3_normal_SCLC/splicing_factor.csv xiangmeng@172.16.1.22:/mnt/data/user_data/xiangmeng/project/tmp/OTS/2_SCLC_splicing
-
 SP_genes <- read.csv("./GO_term_summary_20250205_003645.csv")
 SP_genes_1 <- SP_genes %>% mutate(human_gene = convert_mouse_to_human_symbols(as.character(SP_genes$Symbol))) %>% drop_na()
 all_merge$SFs <- rowMeans((all_merge[,intersect(SP_genes_1$human_gene,colnames(all_merge))]))
