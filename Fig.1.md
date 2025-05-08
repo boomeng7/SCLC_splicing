@@ -237,7 +237,11 @@ pdf(file="./Fig1/JHB_protien_GSVA_splicing_SCLC_VS_normal.pdf",height=3.5,width=
 p1
 dev.off()
 ```
-- <img src="Figures/Fig.1/Fig.1e-1.pdf" width="500" /> - <img src="Figures/Fig.1/Fig.1e-2.pdf" width="500" />
+<div style="display: flex; justify-content: space-between;">
+  <img src="Figures/Fig.1/Fig.1e-1_page-0001.jpg" width="48%" />
+  <img src="Figures/Fig.1/Fig.1e-2_page-0001.jpg" width="48%" />
+</div>
+
 
 
 
