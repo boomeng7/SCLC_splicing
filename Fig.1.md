@@ -1,4 +1,3 @@
-- figure.1 pipeline
 ```r
 library(Rsamtools)
 library(GenomicFeatures)
@@ -242,13 +241,78 @@ dev.off()
   <img src="Figures/Fig.1/Fig.1e-2_page-0001.jpg" width="48%" />
 </div>
 
+<div style="display: flex; justify-content: space-between;">
+  <img src="Figures/Fig.1/Fig.1e-3_page-0001.jpg" width="48%" />
+  <img src="Figures/Fig.1/Fig.1e-4_page-0001.jpg" width="48%" />
+</div>
 
+Fig.1B
+```r
+SCLC_sce_Lung_obj <- mcreadRDS("./SCLC_sce_Lung_obj.rds",mc.cores=20)
+SCLC_sce_Lung_obj <- readRDS("./SCLC_sce_Lung_obj.rds")
+my_pal1 <- jdb_palette("corona")
+names(my_pal1) <- c("T cell","SCLC-A","SCLC-P","SCLC-N","AE1","AEP","B cell","Basal","Ciliated","Club","DC","Endothelial","Fibroblast","Hepatocyte","Ionocyte","Macrophage","Mast","Mucinous","Neuroendocrine","Neutrophil","Plasma cell")
+SCLC_sce_Lung_obj$cell_type_fine <- factor(SCLC_sce_Lung_obj$cell_type_fine,levels=names(my_pal1))
 
+p2 <- DimPlot(object = SCLC_sce_Lung_obj, reduction = "umap",repel=TRUE,label=FALSE,group.by="cell_type_fine") +scale_color_manual(values = my_pal1, guide = "none")
 
-# ========== Fig.1a ========== 
-# （注：这里重复写了几次 Fig.1a，保留原文）
+pdf(file="./Fig1/MSK_patients_scRNAseq_umap.pdf",height=4,width=6.6)
+p2
+dev.off()
+```
+<img src="Figures/Fig.1/Fig.1f_page-0001.jpg" width="48%" />
 
-# 读入差异分析结果
+Fig.1C
+```r
+SP_genes <- read.csv("./GO_term_summary_20250205_003645.csv")
+SP_genes_1 <- SP_genes %>% mutate(human_gene = convert_mouse_to_human_symbols(as.character(SP_genes$Symbol))) %>% drop_na()
+Splicing_factor_genes <- intersect(SP_genes_1$human_gene,rownames(SCLC_sce_Lung_obj))
+speci_raw <- FetchData(object = SCLC_sce_Lung_obj, vars = Splicing_factor_genes,slot="data")
+SCLC_sce_Lung_obj[["Splicing_factor_genes"]] <- (rowSums(speci_raw))/length(Splicing_factor_genes)
+
+XY_FeaturePlot(object = SCLC_sce_Lung_obj, features = "Splicing_factor_genes",pt.size=0.2,
+  ncol=5,reduction="umap",label=T,cols = CustomPalette(low ="#B0B0B0", mid = "#32CD32",high = "#FF0000"))
+XY_FeaturePlot(object = SCLC_sce_Lung_obj, features = "Splicing_factor_genes", 
+  pt.size=0.2, ncol=5, reduction="umap", label=T, 
+  cols = CustomPalette(low ="#B0B0B0", mid = "#90EE90", high = "#FF0000"))
+p1 <- XY_FeaturePlot(object = SCLC_sce_Lung_obj, features = "Splicing_factor_genes", 
+  pt.size=0.2, ncol=5, reduction="umap", label=T, 
+  cols = CustomPalette(low ="#007BBF", mid = "#89CFF0", high = "#FF0000"))
+p1 <- XY_FeaturePlot(object = SCLC_sce_Lung_obj, features = "Splicing_factor_genes", 
+  pt.size = 0.2, ncol = 5, reduction = "umap", label = TRUE, 
+  cols = CustomPalette(low = "#6A5ACD", mid = "#C3B1E1", high = "#FFD700"))
+pdf(file="/mnt/data/user_data/xiangmeng/project/tmp/OTS/2_SCLC_splicing/output/Fig1/MSK_patients_scRNAseq_SFs_featureplot_umap_v3.pdf",height=3.5,width=4)
+p1
+dev.off()
+ggsave("./Fig1/MSK_patients_scRNAseq_SFs_featureplot_umap_v31.png", plot=p1,width = 4, height = 3.5,dpi=1080)
+```
+<img src="Figures/Fig.1/Fig.1g_page-0001.jpg" width="48%" />
+
+Fig.1C
+```r
+speci_raw <- FetchData(object = SCLC_sce_Lung_obj, vars = c("Splicing_factor_genes","cell_type_fine","PRMT5"),slot="data")
+speci_raw$cell_type_fine <- factor(speci_raw$cell_type_fine,levels= c("SCLC-A","SCLC-N","SCLC-P","T cell","AE1","AEP","B cell","Basal","Ciliated","Club","DC","Endothelial","Fibroblast","Hepatocyte","Ionocyte","Macrophage","Mast","Mucinous","Neuroendocrine","Neutrophil","Plasma cell"))
+speci_raw$new_Group <- ifelse(speci_raw$cell_type_fine %in% c("SCLC-A","SCLC-N","SCLC-P"),speci_raw$cell_type_fine,"Non-tumor cell")
+speci_raw$new_Group <- ifelse(speci_raw$cell_type_fine %in% c("SCLC-A","SCLC-N","SCLC-P"),speci_raw$cell_type_fine,"Non-tumor cell")
+my_pal <- jdb_palette("corona")
+p1 <- ggplot(speci_raw, aes(x = cell_type_fine, y = Splicing_factor_genes, color = cell_type_fine, fill = cell_type_fine)) +
+  geom_boxplot(color = "black", size = 0.7,outlier.shape = NA) +  # 设置边框为黑色
+  labs(title="SFs in subtypes") +
+  scale_color_manual(values = my_pal1, guide = "none") +
+  scale_fill_manual(values = my_pal1, guide = "none") +  # 为箱线图内部填充设置颜色
+  theme_classic() +
+  stat_summary(fun.y = median, geom = "point", colour = "darkred", size = 3) +
+  NoLegend() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 10, color = "black"),
+        axis.text.y = element_text(size = 10, color = "black")) 
+pdf(file="./Fig1/scRNAseq_MSK_subtype_SFs_expression_all_sub.pdf",height=3,width=5)
+p1
+dev.off()
+```
+<img src="Figures/Fig.1/Fig.1h_page-0001.jpg" width="48%" />
+
+Fig.1D
+```r
 TRMA_VS_TRM <- read.csv("./PRMA_VS_PRM_TrudyOliver.csv")
 
 # 读入GSEA基因集
@@ -310,7 +374,4 @@ p1 <- ggbarplot(
 rotate_x_text(angle = 90) + 
 scale_fill_manual(values = color1)
 ```
-
-- ![Fig.1a](Figures/Fig.1/gaodong_merge_ncTRM_pca_plot.png)
-- <img src="Figures/Fig.1/gaodong_merge_ncTRM_pca_plot.png" width="500" />
-
+<img src="Figures/Fig.1/Fig.1a_pages-to-jpg-0001.jpg" width="48%" />
