@@ -435,7 +435,7 @@ p1
 dev.off()
 ```
 <div style="display: flex; justify-content: space-between;">
-  <img src="Figures/Fig.3/Fig.3e_page-0001.jpg" width="30%" />
+  <img src="Figures/Fig.3/Fig.3e_page-0001.jpg" width="25%" />
   <img src="Figures/Fig.3/Fig.3f_page-0001.jpg" width="30%" />
   <img src="Figures/Fig.3/Fig.3f-1_page-0001.jpg" width="30%" />
 </div>
