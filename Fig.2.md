@@ -1442,25 +1442,25 @@ ZGB MXE
 <div style="display: flex; justify-content: space-between;">
   <img src="Figures/Fig.2/Fig.2e_page-0001.jpg" width="30%" />
   <img src="Figures/Fig.2/Fig.2e-1_page-0001.jpg" width="30%" />
-  <img src="Figures/Fig.2/Fig.2e-3_page-0001.jpg" width="30%" />
+  <img src="Figures/Fig.2/Fig.2e-3_page-0001.jpg" width="15%" />
 </div>
 
 <div style="display: flex; justify-content: space-between;">
   <img src="Figures/Fig.2/Fig.2f_page-0001.jpg" width="30%" />
   <img src="Figures/Fig.2/Fig.2f-1_page-0001.jpg" width="30%" />
-  <img src="Figures/Fig.2/Fig.2f-3_page-0001.jpg" width="30%" />
+  <img src="Figures/Fig.2/Fig.2f-3_page-0001.jpg" width="15%" />
 </div>
 
 ZGB SE
 <div style="display: flex; justify-content: space-between;">
   <img src="Figures/Fig.2/Fig.2h-1_page-0001.jpg" width="30%" />
   <img src="Figures/Fig.2/Fig.2h_page-0001.jpg" width="30%" />
-  <img src="Figures/Fig.2/Fig.2h-2_page-0001.jpg" width="30%" />
+  <img src="Figures/Fig.2/Fig.2h-2_page-0001.jpg" width="15%" />
 </div>
 
 JHB SE
 <div style="display: flex; justify-content: space-between;">
   <img src="Figures/Fig.2/Fig.2i-2_page-0001.jpg" width="30%" />
   <img src="Figures/Fig.2/Fig.2i_page-0001.jpg" width="30%" />
-  <img src="Figures/Fig.2/Fig.2i-1_page-0001.jpg" width="30%" />
+  <img src="Figures/Fig.2/Fig.2i-1_page-0001.jpg" width="15%" />
 </div>
