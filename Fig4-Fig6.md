@@ -535,37 +535,49 @@ p1
 
 ## Figure5D and Supplementary Figure5B
 ```r
-
-library(BuenColors)
-library(ggrepel)
-drug_vs_ctrl_df_all <- res_1
-drug_vs_ctrl_factor <- drug_vs_ctrl_df_all[drug_vs_ctrl_df_all$symbol%in%c(SP_genes_1$Symbol),]
-drug_vs_ctrl_factor <- drug_vs_ctrl_factor[order(drug_vs_ctrl_factor$log2FoldChange,decreasing=F),]
-drug_vs_ctrl_factor$order <- c(1:nrow(drug_vs_ctrl_factor))
-drug_vs_ctrl_factor$X <- drug_vs_ctrl_factor$symbol
-library(dplyr)
-drug_vs_ctrl_factor$threshold = as.factor(ifelse((drug_vs_ctrl_factor$log2FoldChange) > 0, 'Up','Down'))
+SE_JC <- fread("./rMATS_mDrug_vs_mSCLC_v1/SE.MATS.JC.txt")
+SE_JC <- as.data.frame(SE_JC)
+head(SE_JC)
+SE_JC$AS_Type <- "SE"
+SE_JC <- SE_JC[,c("PValue","FDR","IncLevel1","IncLevel2","IncLevelDifference","AS_Type")]
+RI_JC <- fread("./rMATS_mDrug_vs_mSCLC_v1/RI.MATS.JC.txt")
+RI_JC <- as.data.frame(RI_JC)
+head(RI_JC)
+RI_JC$AS_Type <- "RI"
+RI_JC <- RI_JC[,c("PValue","FDR","IncLevel1","IncLevel2","IncLevelDifference","AS_Type")]
+MXE_JC <- fread("./rMATS_mDrug_vs_mSCLC_v1/MXE.MATS.JC.txt")
+MXE_JC <- as.data.frame(MXE_JC)
+head(MXE_JC)
+MXE_JC$AS_Type <- "MXE"
+MXE_JC <- MXE_JC[,c("PValue","FDR","IncLevel1","IncLevel2","IncLevelDifference","AS_Type")]
+A3SS_JC <- fread("./rMATS_mDrug_vs_mSCLC_v1/A3SS.MATS.JC.txt")
+A3SS_JC <- as.data.frame(A3SS_JC)
+head(A3SS_JC)
+A3SS_JC$AS_Type <- "A3SS"
+A3SS_JC <- A3SS_JC[,c("PValue","FDR","IncLevel1","IncLevel2","IncLevelDifference","AS_Type")]
+A5SS_JC <- fread("./rMATS_mDrug_vs_mSCLC_v1/A5SS.MATS.JC.txt")
+A5SS_JC <- as.data.frame(A5SS_JC)
+head(A5SS_JC)
+A5SS_JC$AS_Type <- "A5SS"
+A5SS_JC <- A5SS_JC[,c("PValue","FDR","IncLevel1","IncLevel2","IncLevelDifference","AS_Type")]
+data <- rbind(SE_JC,RI_JC,MXE_JC,A3SS_JC,A5SS_JC)
+DRUG_splicing_events <- data[data$IncLevelDifference<0&data$PValue<0.05,]
+DMSO_splicing_events <- data[data$IncLevelDifference>0&data$PValue<0.05,]
+DRUG_splicing_events1 <- data.frame(table(DRUG_splicing_events$AS_Type))
+DMSO_splicing_events1 <- data.frame(table(DMSO_splicing_events$AS_Type))
+DRUG_splicing_events1$Var2 <- "DRUG"
+DMSO_splicing_events1$Var2 <- "DMSO"
+data_long <- rbind(DRUG_splicing_events1,DMSO_splicing_events1)
 library(ggplot2)
-
-my_pal1 <- jdb_palette("corona")[1:2]
-names(my_pal1) <- c("Down","Up")
-drug_vs_ctrl_factor <- drug_vs_ctrl_factor[order(drug_vs_ctrl_factor$log2FoldChange,decreasing=F),]
-tmpgene <- drug_vs_ctrl_factor$X[1:5]
-p1 <- ggplot(data = drug_vs_ctrl_factor, aes(x = order, y = log2FoldChange, colour = threshold)) +
-  geom_point(alpha = 0.8, size = 2) +
-  scale_color_manual(values = my_pal1) +
-  labs(title = "drug vs ctrl splicing factor") +
-  geom_text_repel(
-    data = rbind(drug_vs_ctrl_factor %>% top_n(5, wt = log2FoldChange), subset(drug_vs_ctrl_factor, X %in% c(tmpgene,"Prmt5"))),
-    aes(label = X),
-    hjust = 0, vjust = 1.5, color = "black") +
-  theme(plot.margin = unit(rep(2, 4), 'cm')) +
-  theme(panel.border = element_rect(color = "black", fill = NA, size = 1)) +
-  theme(axis.text = element_text(size = 10), axis.title = element_text(size = 12)) +
-  theme(panel.background = element_blank(), # 去掉面板背景
-        plot.background = element_blank()) +  # 去掉整个图形背景
-  geom_hline(yintercept = 0, linetype = "dashed", color = "gray")  # 在y=0处画灰色虚线
-p1
+library(tidyr)  
+data_long$Var2 <- factor(data_long$Var2,levels=c("DMSO","DRUG"))
+p <- ggplot(data_long, aes(x = Var2, y = Freq, fill = Var2)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  facet_wrap(~ Var1, scales = "free_y",ncol=5) +  # 为每个变量绘制单独的面板，并且每个面板的Y轴是独立的
+  labs(title = "", x = "", y = "Splicing Events") +
+  scale_fill_manual(values = c("DRUG"="#b20000","DMSO"="#2873B3"))+
+  theme_bw() 
+p
 ```
 ![Figure5D and Supplementary Figure5B](./Figures/Fig4-6/Fig5D-1-DRUG-vs-DMSO-bar-splicing_events.jpg)
 
@@ -767,7 +779,7 @@ p1 <- ggplot(SE_mmu_merge1, aes(x = -log10(SE_score), fill = Group)) +
        x = "Affinity with H-2-Kb", y = "Density")
 ggsave(p1,file="Supplementary Figure.5-1-density-DRUG-SCLC-SE-P005.png",height=4,width=5.1)
 ```
-<img src="./Figure/Supplementary Figure.5-1-density-DRUG-SCLC-SE-P005.png" width="50%" height="50%">
+<img src="./Figures/Fig4-6/Supplementary Figure.5-1-density-DRUG-SCLC-SE-P005.png" width="50%" height="50%">
 
 ```r
 ####箱型图
@@ -790,7 +802,7 @@ p2 <- p1 +  stat_summary(fun=median, geom="line", aes(group=1),
 p2
 ggsave(p2,file="Supplementary Figure.5-2-boxplot-DRUG-SCLC-SE-P005.png",height=3.5,width=3.6)
 ```
-<img src="./Figure/Supplementary Figure.5-2-boxplot-DRUG-SCLC-SE-P005.png" width="50%" height="50%">
+<img src="./Figures/Fig4-6/Supplementary Figure.5-2-boxplot-DRUG-SCLC-SE-P005.png" width="50%" height="50%">
 
 ```r
 #####Strong Binding
@@ -817,7 +829,7 @@ p2 <- ggplot(dat1, aes(x = Var1, y = Relative_Abundance, fill = Var1)) +
 
 ggsave(p2,file="Supplementary Figure.5-3-bar-DRUG-SCLC-SE-strongbing-P005.png",height=3,width=4)
 ```
-<img src="./Figure/Supplementary Figure.5-3-bar-DRUG-SCLC-SE-strongbing-P005.png" width="50%" height="50%">
+<img src="./Figures/Fig4-6/Supplementary Figure.5-3-bar-DRUG-SCLC-SE-strongbing-P005.png" width="50%" height="50%">
 
 
 ## Figure5G
@@ -1051,9 +1063,9 @@ p2 <- ggplot(dat1, aes(x = Var1, y = Relative_Abundance, fill = Var1)) +
   theme(axis.text.x = element_blank())
 ggsave(p2,file="Supplementary Figure.5D-3-bar-DRUG_SCLC-MXE-strongbing-FDR005-SCLC.png",height=5,width=6)
 ```
-<img src="./Figure/Supplementary Figure.5D-1-density-DRUG_SCLC-MXE-FDR005-SCLC.png" width="50%" height="50%">
-<img src="./Figure/Supplementary Figure.5D-2-boxplot-DRUG_SCLC-MXE-FDR005-SCLC.png" width="50%" height="50%">
-<img src="./Figure/Supplementary Figure.5D-3-bar-DRUG_SCLC-MXE-strongbing-FDR005-SCLC.png" width="50%" height="50%">
+<img src="./Figures/Fig4-6/Supplementary Figure.5D-1-density-DRUG_SCLC-MXE-FDR005-SCLC.png" width="50%" height="50%">
+<img src="./Figures/Fig4-6/Supplementary Figure.5D-2-boxplot-DRUG_SCLC-MXE-FDR005-SCLC.png" width="50%" height="50%">
+<img src="./Figures/Fig4-6/Supplementary Figure.5D-3-bar-DRUG_SCLC-MXE-strongbing-FDR005-SCLC.png" width="50%" height="50%">
 
 ## Supplementary Figure5E
 ```r
@@ -1143,9 +1155,9 @@ p2 <- ggplot(dat1, aes(x = Var1, y = Relative_Abundance, fill = Var1)) +
   theme(axis.text.x = element_blank())
 ggsave(p2,file="Supplementary Figure.5E-3-bar-DRUG_SCLC-MXE-strongbing-FDR005-DRUG.png",height=3,width=5.5)
 ```
-<img src="./Figure/Supplementary Figure.5E-1-density-DRUG-SCLC-MXE-FDR005-DRUG.png" width="50%" height="50%">
-<img src="./Figure/Supplementary Figure.5E-2-boxplot-DRUG_SCLC-MXE-FDR005-DRUG.png" width="50%" height="50%">
-<img src="./Figure/Supplementary Figure.5E-3-bar-DRUG_SCLC-MXE-strongbing-FDR005-DRUG.png" width="50%" height="50%">
+<img src="./Figures/Fig4-6/Supplementary Figure.5E-1-density-DRUG-SCLC-MXE-FDR005-DRUG.png" width="50%" height="50%">
+<img src="./Figures/Fig4-6/Supplementary Figure.5E-2-boxplot-DRUG_SCLC-MXE-FDR005-DRUG.png" width="50%" height="50%">
+<img src="./Figures/Fig4-6/Supplementary Figure.5E-3-bar-DRUG_SCLC-MXE-strongbing-FDR005-DRUG.png" width="50%" height="50%">
 
 
 ## Figure6F
@@ -1487,7 +1499,7 @@ pal <- jdb_palette("corona")
 pal <- pal[c(2,1,3:length(pal))]
 plot <- DimPlot(object = only_T_harmony1, reduction = "openTSNE",label=FALSE,repel=FALSE,group.by="v2_Cell_annotation",split.by="group",cols=pal) +labs(title="openTSNE")
 ```
-![Supplementary Figure6A](./Figure/SupplementaryFigure6/Fig5.7.svg)
+![Supplementary Figure6A](./Figures/Fig4-6/SupplementaryFigure6/Fig5.7.svg)
 
 ## Supplementary Figure6B
 ```r
@@ -1501,7 +1513,7 @@ p4 <- ggplot(aa_all, aes(x = Var1, y = Freq, fill = Var2, stratum = Var2, alluvi
 theme_classic() + theme(axis.text.x  = element_text(angle=45, vjust=1,hjust = 1)) +labs(x = '', y = 'Relative Abundance(%)',title="Freq")+scale_fill_manual(values = pal)+scale_color_manual(values = pal)
 plot_grid(p4,ncol=1)
 ```
-![Supplementary Figure6B](./Figure/SupplementaryFigure6/Fig5.8.svg)
+![Supplementary Figure6B](./Figures/Fig4-6/SupplementaryFigure6/Fig5.8.svg)
 
 ## Supplementary Figure6C
 ```r
@@ -1533,7 +1545,7 @@ All_plot_merge1 <- lapply(1:length(Sel_sig),function(x) {
 })
 plot <- CombinePlots(c(All_plot_merge1),nrow=1)
 ```
-![Supplementary Figure6C](./Figure/SupplementaryFigure6/Fig5.9.svg)
+![Supplementary Figure6C](./Figures/Fig4-6/SupplementaryFigure6/Fig5.9.svg)
 
 ## Supplementary Figure6D
 ```r
@@ -1562,7 +1574,7 @@ plot <- ggscatter(All_sum, x = "MHC_I_mole", y = "Inflammatory_and_cytokine",col
     geom_density_2d(aes(alpha = ..nlevel..),colour="#BB2933", size = 1,bin=8) +scale_alpha_continuous(range = c(0, 1.5))+
     scale_colour_gradientn(colours = colorRampPalette(aa)(100))+  xlim(-0.5,0.5)+ylim(-0.5,0.5)
 ```
-![Supplementary Figure6D](./Figure/SupplementaryFigure6/Fig5.10.svg)
+![Supplementary Figure6D](./Figures/Fig4-6/SupplementaryFigure6/Fig5.10.svg)
 
 ## Supplementary Figure6E
 ```r
@@ -1578,4 +1590,4 @@ All_plot_merge1 <- lapply(1:length(Sel_sig),function(x) {
 })
 plot <- CombinePlots(c(All_plot_merge1),nrow=1)
 ```
-![Supplementary Figure6E](./Figure/SupplementaryFigure6/Fig5.11.svg)
+![Supplementary Figure6E](./Figures/Fig4-6/SupplementaryFigure6/Fig5.11.svg)
