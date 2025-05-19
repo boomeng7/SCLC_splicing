@@ -1237,11 +1237,16 @@ labs(x = '', y = 'Relative Abundance(%)',title="ALL percentage of subpop")+ them
 
 ## Figure6H
 ```r
-only_T_harmony1 <- mcreadRDS("/local/workdir/xuelan/1_project/SCLC/only_T.harmony.rds",mc.cores=20)
-pal <- jdb_palette("corona")
-pal <- pal[c(2,1,3:length(pal))]
-plot <- DimPlot(object = only_T_harmony1, reduction = "openTSNE",label=FALSE,repel=FALSE,group.by="v2_Cell_annotation",split.by="group",cols=pal) +labs(title="openTSNE")
-ggsave("/local/workdir/xuelan/1_project/SCLC/res/Fig5.7.svg", plot=plot,width = 20, height = 7,dpi=300)
+aa_all_merge <- mcreadRDS("/local/workdir/xuelan/1_project/SCLC/scRNA_All.propo.v1.rds", mc.cores = 20)
+cell_sub <- unique(as.character(aa_all_merge$Var2))
+All_plot_merge <- lapply(1:length(cell_sub),function(x) {
+  plot <- ggboxplot(aa_all_merge[aa_all_merge$Var2==cell_sub[x],], x = "group", y = "normal_ratio", fill="group",
+    title=paste0("%",cell_sub[x]), legend = "none",outlier.shape = NA,notch = FALSE,add = "jitter") +rotate_x_text(angle = 45)+
+  stat_summary(fun.y = median, geom="point",colour="darkred", size=3) +   stat_summary(fun = median, geom = "line",aes(group = 1),col = "red",size=1)+
+  stat_compare_means(comparisons =list(c("WT","Veh"),c("WT","Prmt5"),c("Veh","Prmt5")),label = "p.signif", method = "t.test")
+  return(plot)
+})
+plot <- CombinePlots(All_plot_merge,nrow=1)
 ```
 ![Figure6H](./Figures/Fig4-6/Fig6H.svg)
 
