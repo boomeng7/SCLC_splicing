@@ -1499,7 +1499,7 @@ pal <- jdb_palette("corona")
 pal <- pal[c(2,1,3:length(pal))]
 plot <- DimPlot(object = only_T_harmony1, reduction = "openTSNE",label=FALSE,repel=FALSE,group.by="v2_Cell_annotation",split.by="group",cols=pal) +labs(title="openTSNE")
 ```
-![Supplementary Figure6A](./Figures/Fig4-6/SupplementaryFigure6/Fig5.7.svg)
+![Supplementary Figure6A](./Figures/Fig4-6/Fig5.7.svg)
 
 ## Supplementary Figure6B
 ```r
@@ -1513,7 +1513,7 @@ p4 <- ggplot(aa_all, aes(x = Var1, y = Freq, fill = Var2, stratum = Var2, alluvi
 theme_classic() + theme(axis.text.x  = element_text(angle=45, vjust=1,hjust = 1)) +labs(x = '', y = 'Relative Abundance(%)',title="Freq")+scale_fill_manual(values = pal)+scale_color_manual(values = pal)
 plot_grid(p4,ncol=1)
 ```
-![Supplementary Figure6B](./Figures/Fig4-6/SupplementaryFigure6/Fig5.8.svg)
+![Supplementary Figure6B](./Figures/Fig4-6/Fig5.8.svg)
 
 ## Supplementary Figure6C
 ```r
@@ -1545,7 +1545,7 @@ All_plot_merge1 <- lapply(1:length(Sel_sig),function(x) {
 })
 plot <- CombinePlots(c(All_plot_merge1),nrow=1)
 ```
-![Supplementary Figure6C](./Figures/Fig4-6/SupplementaryFigure6/Fig5.9.svg)
+![Supplementary Figure6C](./Figures/Fig4-6/Fig5.9.svg)
 
 ## Supplementary Figure6D
 ```r
@@ -1574,7 +1574,7 @@ plot <- ggscatter(All_sum, x = "MHC_I_mole", y = "Inflammatory_and_cytokine",col
     geom_density_2d(aes(alpha = ..nlevel..),colour="#BB2933", size = 1,bin=8) +scale_alpha_continuous(range = c(0, 1.5))+
     scale_colour_gradientn(colours = colorRampPalette(aa)(100))+  xlim(-0.5,0.5)+ylim(-0.5,0.5)
 ```
-![Supplementary Figure6D](./Figures/Fig4-6/SupplementaryFigure6/Fig5.10.svg)
+![Supplementary Figure6D](./Figures/Fig4-6/Fig5.10.svg)
 
 ## Supplementary Figure6E
 ```r
@@ -1590,4 +1590,4 @@ All_plot_merge1 <- lapply(1:length(Sel_sig),function(x) {
 })
 plot <- CombinePlots(c(All_plot_merge1),nrow=1)
 ```
-![Supplementary Figure6E](./Figures/Fig4-6/SupplementaryFigure6/Fig5.11.svg)
+![Supplementary Figure6E](./Figures/Fig4-6/Fig5.11.svg)
